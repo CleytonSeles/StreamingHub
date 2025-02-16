@@ -1,3 +1,5 @@
+/* Classe para estilizar o contêiner principal da aplicação */
 .App {
+  /* Alinha o texto ao centro */
   text-align: center;
 }

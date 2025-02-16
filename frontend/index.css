@@ -1,10 +1,17 @@
+/* Estilos globais para o corpo da página */
 body {
+  /* Remove a margem padrão do corpo */
   margin: 0;
+  /* Define a família de fontes a ser utilizada */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* Suaviza a renderização de fontes no WebKit (Safari, Chrome) */
   -webkit-font-smoothing: antialiased;
+  /* Suaviza a renderização de fontes no Firefox */
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Estilos para elementos <code> */
 code {
+  /* Define a família de fontes a ser utilizada para elementos <code> */
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }

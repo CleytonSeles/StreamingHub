@@ -1,21 +1,24 @@
 const express = require('express');
 const { createPlaylist, getAllPlaylists, updatePlaylist, deletePlaylist } = require('../controllers/playlistController');
 const authMiddleware = require('../middleware/authMiddleware');
-
 const router = express.Router();
 
-// Criar playlist
+// Rota para criar uma nova playlist
+// Utiliza o middleware de autenticação para garantir que o usuário esteja autenticado
 router.post('/', authMiddleware, createPlaylist);
 
-// Obter todas as playlists
+// Rota para obter todas as playlists
 router.get('/', getAllPlaylists);
 
-// Atualizar playlist
+// Rota para atualizar uma playlist existente
+// Utiliza o middleware de autenticação para garantir que o usuário esteja autenticado
 router.put('/:id', authMiddleware, updatePlaylist);
 
-// Excluir playlist
+// Rota para excluir uma playlist existente
+// Utiliza o middleware de autenticação para garantir que o usuário esteja autenticado
 router.delete('/:id', authMiddleware, deletePlaylist);
 
+// Exportação do roteador para ser utilizado em outras partes da aplicação
 module.exports = router;
 
 

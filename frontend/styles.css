@@ -1,163 +1,238 @@
 /* Estilos Globais */
 body {
+  /* Remove a margem padrão do corpo */
   margin: 0;
+  /* Define a família de fontes a ser utilizada */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* Suaviza a renderização de fontes no WebKit (Safari, Chrome) */
   -webkit-font-smoothing: antialiased;
+  /* Suaviza a renderização de fontes no Firefox */
   -moz-osx-font-smoothing: grayscale;
+  /* Define a cor de fundo do corpo */
   background-color: #f0f2f5;
+  /* Define a cor do texto */
   color: #333;
 }
 
 .App {
+  /* Alinha o texto ao centro */
   text-align: center;
 }
 
 h1 {
+  /* Define a cor do título h1 */
   color: #4a90e2;
 }
 
 form {
+  /* Define o fundo do formulário */
   background: #fff;
+  /* Define o preenchimento interno do formulário */
   padding: 20px;
+  /* Define a margem do formulário */
   margin: 20px auto;
+  /* Define o raio das bordas do formulário */
   border-radius: 8px;
+  /* Adiciona uma sombra ao formulário */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Define a largura máxima do formulário */
   max-width: 400px;
 }
 
 input {
+  /* Exibe o input como bloco */
   display: block;
+  /* Define a largura do input */
   width: calc(100% - 20px);
+  /* Define o preenchimento interno do input */
   padding: 10px;
+  /* Define a margem do input */
   margin: 10px 0;
+  /* Define a borda do input */
   border: 1px solid #ccc;
+  /* Define o raio das bordas do input */
   border-radius: 4px;
 }
 
 button {
+  /* Define a cor de fundo do botão */
   background: #4a90e2;
+  /* Define a cor do texto do botão */
   color: #fff;
+  /* Define o preenchimento interno do botão */
   padding: 10px 20px;
+  /* Remove a borda do botão */
   border: none;
+  /* Define o raio das bordas do botão */
   border-radius: 4px;
+  /* Define o cursor do mouse ao passar sobre o botão */
   cursor: pointer;
 }
 
 button:hover {
+  /* Define a cor de fundo do botão ao passar o mouse */
   background: #357ab8;
 }
 
 a {
+  /* Define a cor do link */
   color: #4a90e2;
+  /* Remove a decoração do link */
   text-decoration: none;
+  /* Define a margem do link */
   margin: 10px;
 }
 
 a:hover {
+  /* Adiciona sublinhado ao link ao passar o mouse */
   text-decoration: underline;
 }
 
 /* Estilos para Navbar */
 .navbar {
+  /* Define a cor de fundo da navbar */
   background: #4a90e2;
+  /* Define o preenchimento interno da navbar */
   padding: 10px;
+  /* Define o alinhamento dos itens dentro da navbar */
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* Define a cor do texto da navbar */
   color: #fff;
 }
 
 .navbar h2 {
+  /* Remove a margem do título h2 na navbar */
   margin: 0;
 }
 
 .navbar ul {
+  /* Remove a lista padrão */
   list-style: none;
+  /* Define o alinhamento dos itens dentro da lista */
   display: flex;
   margin: 0;
   padding: 0;
 }
 
 .navbar ul li {
+  /* Define a margem dos itens da lista */
   margin: 0 10px;
 }
 
 .navbar ul li a {
+  /* Define a cor dos links na navbar */
   color: #fff;
+  /* Remove a decoração dos links na navbar */
   text-decoration: none;
 }
 
 .navbar ul li a:hover {
+  /* Adiciona sublinhado aos links na navbar ao passar o mouse */
   text-decoration: underline;
 }
 
 /* Estilos para VideoCard */
 .video-card {
+  /* Define a cor de fundo do cartão de vídeo */
   background: #fff;
+  /* Define o preenchimento interno do cartão de vídeo */
   padding: 10px;
+  /* Define a margem do cartão de vídeo */
   margin: 10px;
+  /* Define o raio das bordas do cartão de vídeo */
   border-radius: 8px;
+  /* Adiciona uma sombra ao cartão de vídeo */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Define a largura máxima do cartão de vídeo */
   max-width: 300px;
 }
 
 .video-card img {
+  /* Define a largura da imagem no cartão de vídeo */
   width: 100%;
+  /* Define o raio das bordas da imagem no cartão de vídeo */
   border-radius: 8px;
 }
 
 .video-card h3 {
+  /* Define a margem do título h3 no cartão de vídeo */
   margin: 10px 0;
 }
 
 .video-card p {
+  /* Define a cor do texto do parágrafo no cartão de vídeo */
   color: #666;
 }
 
 /* Estilos para PlaylistCard */
 .playlist-card {
+  /* Define a cor de fundo do cartão de playlist */
   background: #fff;
+  /* Define o preenchimento interno do cartão de playlist */
   padding: 10px;
+  /* Define a margem do cartão de playlist */
   margin: 10px;
+  /* Define o raio das bordas do cartão de playlist */
   border-radius: 8px;
+  /* Adiciona uma sombra ao cartão de playlist */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Define a largura máxima do cartão de playlist */
   max-width: 300px;
 }
 
 .playlist-card h3 {
+  /* Define a margem do título h3 no cartão de playlist */
   margin: 10px 0;
 }
 
 .playlist-card p {
+  /* Define a cor do texto do parágrafo no cartão de playlist */
   color: #666;
 }
 
 /* Estilos para VideoPlayer */
 .video-player {
+  /* Define a cor de fundo do player de vídeo */
   background: #fff;
+  /* Define o preenchimento interno do player de vídeo */
   padding: 10px;
+  /* Define a margem do player de vídeo */
   margin: 10px;
+  /* Define o raio das bordas do player de vídeo */
   border-radius: 8px;
+  /* Adiciona uma sombra ao player de vídeo */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Define a largura máxima do player de vídeo */
   max-width: 800px;
+  /* Centraliza o player de vídeo */
   margin: auto;
 }
 
 .video-player video {
+  /* Define a largura do vídeo no player de vídeo */
   width: 100%;
+  /* Define o raio das bordas do vídeo no player de vídeo */
   border-radius: 8px;
 }
 
 .video-player h3 {
+  /* Define a margem do título h3 no player de vídeo */
   margin: 10px 0;
 }
 
 .video-player p {
+  /* Define a cor do texto do parágrafo no player de vídeo */
   color: #666;
 }
 
+/* Estilos para contêineres de vídeos e playlists */
 .videos, .playlists {
+  /* Define o alinhamento dos itens dentro dos contêineres */
   display: flex;
+  /* Permite que os itens quebrem linha */
   flex-wrap: wrap;
+  /* Centraliza os itens dentro dos contêineres */
   justify-content: center;
 }
