@@ -1,0 +1,38 @@
+{
+  "name": "streaminghub",
+  "version": "1.0.0",
+  "description": "Plataforma de streaming de vídeo desenvolvida como um projeto desafio.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha --timeout 10000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CleytonSeles/StreamingHub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CleytonSeles/StreamingHub/issues"
+  },
+  "homepage": "https://github.com/CleytonSeles/StreamingHub#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.5"
+  },
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^9.1.3",
+    "supertest": "^6.2.4"
+  },
+  "directories": {
+    "test": "test"
+  }
+}
