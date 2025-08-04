@@ -1,7 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
-const { generateToken } = require('../utils/jwt');
-const { getAuthURL, getAccessToken, getUserProfile } = require('../services/spotifyService');
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { generateToken } from '../utils/jwt.js';
+import { getAuthURL, getAccessToken, getUserProfile } from '../services/spotifyService.js';
 
 const prisma = new PrismaClient();
 

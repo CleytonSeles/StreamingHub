@@ -1,5 +1,5 @@
-const { verifyToken } = require('../utils/jwt');
-const { PrismaClient } = require('@prisma/client');
+import { verifyToken } from '../utils/jwt.js';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

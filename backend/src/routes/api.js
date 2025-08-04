@@ -1,6 +1,12 @@
-const express = require('express');
-const { authenticateToken } = require('../middlewares/authMiddleware');
-const { PrismaClient } = require('@prisma/client');
+import express from 'express';
+import { authenticateToken } from '../middlewares/authMiddleware.js';
+import { PrismaClient } from '@prisma/client';
+import {
+  addTrackToPlaylist,
+  removeTrackFromPlaylist,
+  addFavorite,
+  removeFavorite,
+} from '../controllers/playlistController.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -45,11 +51,18 @@ router.post('/playlists', async (req, res) => {
   }
 });
 
-// Listar favoritos
+// Adicionar música à playlist
+router.post('/playlists/:playlistId/tracks', addTrackToPlaylist);
+
+// Remover música da playlist
+router.delete('/playlists/:playlistId/tracks/:trackId', removeTrackFromPlaylist);
+
+// Listar favoritos (com include para dados da música)
 router.get('/favorites', async (req, res) => {
   try {
     const favorites = await prisma.favorite.findMany({
       where: { userId: req.user.id },
+      include: { track: true }, // Inclui os dados da música
       orderBy: { addedAt: 'desc' }
     });
     res.json(favorites);
@@ -57,5 +70,11 @@ router.get('/favorites', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch favorites' });
   }
 });
+
+// Adicionar música aos favoritos
+router.post('/favorites', addFavorite);
+
+// Remover música dos favoritos
+router.delete('/favorites/:trackId', removeFavorite);
 
 module.exports = router;

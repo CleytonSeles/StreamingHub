@@ -1,11 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const { PrismaClient } = require('@prisma/client');
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { PrismaClient } from '@prisma/client';
 
 // Routes
-const authRoutes = require('./routes/auth');
-const apiRoutes = require('./routes/api');
+import authRoutes from './routes/auth';
+import apiRoutes from './routes/api';
 
 const app = express();
 const prisma = new PrismaClient();

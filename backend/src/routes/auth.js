@@ -1,5 +1,5 @@
-const express = require('express');
-const { spotifyLogin, spotifyCallback } = require('../controllers/authController');
+import express from 'express';
+import { spotifyLogin, spotifyCallback } from '../controllers/authController.js';
 
 const router = express.Router();
 
