@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming App - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .token-info {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .search-container {
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #444;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #1db954;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        button:hover {
+            background-color: #1ed760;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .track {
+            background-color: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .track img {
+            width: 60px;
+            height: 60px;
+            margin-right: 15px;
+            border-radius: 5px;
+        }
+        .track-info h3 {
+            margin: 0 0 5px 0;
+            color: #1db954;
+        }
+        .track-info p {
+            margin: 0;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Streaming App Dashboard</h1>
+        <p>Bem-vindo ao seu dashboard de música!</p>
+        
+        <div id="user-info">
+            <h3>Informações do Usuário:</h3>
+            <div class="token-info" id="token-display">
+                Carregando token...
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <h3>🔍 Buscar Músicas</h3>
+            <input type="text" id="search-input" placeholder="Digite o nome da música ou artista...">
+            <button onclick="searchMusic()">Buscar</button>
+        </div>
+        
+        <div class="results" id="search-results">
+            <!-- Resultados aparecerão aqui -->
+        </div>
+    </div>
+
+    <script>
+        // Extrair token da URL
+        function getTokenFromURL() {
+            const hash = window.location.hash;
+            const params = new URLSearchParams(hash.substring(1));
+            return params.get('token');
+        }
+
+        // Decodificar JWT (apenas para exibição - não é seguro para validação)
+        function decodeJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        // Buscar músicas
+        async function searchMusic() {
+            const query = document.getElementById('search-input').value;
+            const token = getTokenFromURL();
+            
+            if (!query) {
+                alert('Digite algo para buscar!');
+                return;
+            }
+            
+            if (!token) {
+                alert('Token não encontrado! Faça login novamente.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/search?query=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayResults(data.tracks || []);
+                } else {
+                    const error = await response.json();
+                    alert(`Erro na busca: ${error.message}`);
+                }
+            } catch (error) {
+                alert(`Erro de conexão: ${error.message}`);
+            }
+        }
+
+        // Exibir resultados
+        function displayResults(tracks) {
+            const resultsDiv = document.getElementById('search-results');
+            
+            if (tracks.length === 0) {
+                resultsDiv.innerHTML = '<p>Nenhuma música encontrada.</p>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '<h3>🎶 Resultados:</h3>' + 
+                tracks.map(track => `
+                    <div class="track">
+                        ${track.imageUrl ? `<img src="${track.imageUrl}" alt="${track.title}">` : '<div style="width:60px;height:60px;background:#555;margin-right:15px;border-radius:5px;"></div>'}
+                        <div class="track-info">
+                            <h3>${track.title}</h3>
+                            <p><strong>Artista:</strong> ${track.artist}</p>
+                            <p><strong>Álbum:</strong> ${track.album}</p>
+                            <p><strong>Duração:</strong> ${Math.floor(track.durationMs / 60000)}:${String(Math.floor((track.durationMs % 60000) / 1000)).padStart(2, '0')}</p>
+                            ${track.previewUrl ? `<audio controls><source src="${track.previewUrl}" type="audio/mpeg"></audio>` : ''}
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        // Inicializar página
+        window.onload = function() {
+            const token = getTokenFromURL();
+            const tokenDisplay = document.getElementById('token-display');
+            
+            if (token) {
+                const decoded = decodeJWT(token);
+                if (decoded) {
+                    tokenDisplay.innerHTML = `
+                        <strong>Usuário:</strong> ${decoded.username}<br>
+                        <strong>ID:</strong> ${decoded.id}<br>
+                        <strong>Token válido até:</strong> ${new Date(decoded.exp * 1000).toLocaleString()}<br>
+                        <strong>Token JWT:</strong> ${token.substring(0, 50)}...
+                    `;
+                } else {
+                    tokenDisplay.innerHTML = `Token: ${token.substring(0, 100)}...`;
+                }
+            } else {
+                tokenDisplay.innerHTML = 'Token não encontrado na URL';
+            }
+        };
+
+        // Permitir busca com Enter
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchMusic();
+            }
+        });
+    </script>
+</body>
+</html>

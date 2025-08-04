@@ -1,12 +1,12 @@
-import express from 'express';
-import { authenticateToken } from '../middlewares/authMiddleware.js';
-import { PrismaClient } from '@prisma/client';
-import {
+const express = require('express');
+const { authenticateToken } = require('../middlewares/authMiddleware');
+const { PrismaClient } = require('@prisma/client');
+const {
   addTrackToPlaylist,
   removeTrackFromPlaylist,
   addFavorite,
   removeFavorite,
-} from '../controllers/playlistController.js';
+} = require('../controllers/playlistController');
 
 const router = express.Router();
 const prisma = new PrismaClient();
