@@ -316,74 +316,255 @@ const deletePlaylist = async (req, res) => {
   }
 };
 
-// Adicionar música à playlist
+// @desc    Add a track to a playlist
+// @route   POST /api/playlists/:playlistId/tracks
+// @access  Private
 const addTrackToPlaylist = async (req, res) => {
   try {
     const { playlistId } = req.params;
-    const { spotifyTrackId, title, artist, album, durationMs, imageUrl } = req.body;
-    const userId = req.user.id; // Obtido do middleware de autenticação
+    const { spotifyTrackId, title, artist, album, durationMs, imageUrl, previewUrl } = req.body;
+    const userId = req.user.id;
 
-    // Verifica se a playlist pertence ao usuário
-    const playlist = await prisma.playlist.findUnique({
-      where: { id: playlistId },
-    });
-
-    if (!playlist || playlist.userId !== userId) {
-      return res.status(403).json({ error: 'Playlist not found or unauthorized' });
+    // Validação básica
+    if (!spotifyTrackId || !title || !artist) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados da música são obrigatórios (spotifyTrackId, title, artist).'
+      });
     }
 
-    // Cria ou encontra a música
+    // Verificar se a playlist existe e pertence ao usuário
+    const playlist = await prisma.playlist.findFirst({
+      where: {
+        id: playlistId,
+        userId: userId
+      }
+    });
+
+    if (!playlist) {
+      return res.status(404).json({
+        success: false,
+        message: 'Playlist não encontrada.'
+      });
+    }
+
+    // Verificar se a música já está na playlist
+    const existingPlaylistTrack = await prisma.playlistTrack.findFirst({
+      where: {
+        playlistId: playlistId,
+        track: {
+          spotifyTrackId: spotifyTrackId
+        }
+      }
+    });
+
+    if (existingPlaylistTrack) {
+      return res.status(400).json({
+        success: false,
+        message: 'Esta música já está na playlist.'
+      });
+    }
+
+    // Encontrar ou criar a música no banco de dados
     let track = await prisma.track.findUnique({
       where: { spotifyTrackId: spotifyTrackId }
     });
 
     if (!track) {
       track = await prisma.track.create({
-        data: { spotifyTrackId, title, artist, album, durationMs, imageUrl }
+        data: {
+          spotifyTrackId,
+          title: title.trim(),
+          artist: artist.trim(),
+          album: album?.trim() || '',
+          durationMs: durationMs || 0,
+          imageUrl: imageUrl || null,
+          previewUrl: previewUrl || null
+        }
       });
     }
 
-    // Adiciona a música à playlist
+    // Adicionar a música à playlist
     const playlistTrack = await prisma.playlistTrack.create({
       data: {
-        playlistId: playlist.id,
-        trackId: track.id,
-        addedAt: new Date(),
+        playlistId: playlistId,
+        trackId: track.id
       },
+      include: {
+        track: true,
+        playlist: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
 
-    res.status(201).json(playlistTrack);
+    console.log('🎵 Música adicionada à playlist:', track.title, 'por', req.user.username);
+
+    res.status(201).json({
+      success: true,
+      message: 'Música adicionada à playlist com sucesso!',
+      data: playlistTrack
+    });
+
   } catch (error) {
-    console.error('Error adding track to playlist:', error);
-    res.status(500).json({ error: 'Failed to add track to playlist' });
+    console.error('❌ Erro ao adicionar música à playlist:', error.message);
+    
+    // Tratar erro de constraint única (música já na playlist)
+    if (error.code === 'P2002') {
+      return res.status(400).json({
+        success: false,
+        message: 'Esta música já está na playlist.'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor ao adicionar música à playlist.'
+    });
   }
 };
 
-// Remover música da playlist
+// @desc    Remove a track from a playlist
+// @route   DELETE /api/playlists/:playlistId/tracks/:trackId
+// @access  Private
 const removeTrackFromPlaylist = async (req, res) => {
   try {
     const { playlistId, trackId } = req.params;
     const userId = req.user.id;
 
-    const playlist = await prisma.playlist.findUnique({
-      where: { id: playlistId },
+    // Verificar se a playlist existe e pertence ao usuário
+    const playlist = await prisma.playlist.findFirst({
+      where: {
+        id: playlistId,
+        userId: userId
+      }
     });
 
-    if (!playlist || playlist.userId !== userId) {
-      return res.status(403).json({ error: 'Playlist not found or unauthorized' });
+    if (!playlist) {
+      return res.status(404).json({
+        success: false,
+        message: 'Playlist não encontrada.'
+      });
     }
 
-    await prisma.playlistTrack.deleteMany({
+    // Verificar se a música está na playlist
+    const playlistTrack = await prisma.playlistTrack.findFirst({
       where: {
-        playlistId: playlist.id,
-        trackId: trackId,
+        playlistId: playlistId,
+        trackId: trackId
       },
+      include: {
+        track: {
+          select: {
+            title: true,
+            artist: true
+          }
+        }
+      }
     });
 
-    res.status(204).send(); // No Content
+    if (!playlistTrack) {
+      return res.status(404).json({
+        success: false,
+        message: 'Música não encontrada na playlist.'
+      });
+    }
+
+    // Remover a música da playlist
+    await prisma.playlistTrack.delete({
+      where: {
+        id: playlistTrack.id
+      }
+    });
+
+    console.log('🗑️ Música removida da playlist:', playlistTrack.track.title, 'por', req.user.username);
+
+    res.status(200).json({
+      success: true,
+      message: 'Música removida da playlist com sucesso!'
+    });
+
   } catch (error) {
-    console.error('Error removing track from playlist:', error);
-    res.status(500).json({ error: 'Failed to remove track from playlist' });
+    console.error('❌ Erro ao remover música da playlist:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor ao remover música da playlist.'
+    });
+  }
+};
+
+// @desc    Get all tracks from a specific playlist
+// @route   GET /api/playlists/:playlistId/tracks
+// @access  Private
+const getPlaylistTracks = async (req, res) => {
+  try {
+    const { playlistId } = req.params;
+    const userId = req.user.id;
+
+    // Verificar se a playlist existe e pertence ao usuário
+    const playlist = await prisma.playlist.findFirst({
+      where: {
+        id: playlistId,
+        userId: userId
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true
+          }
+        }
+      }
+    });
+
+    if (!playlist) {
+      return res.status(404).json({
+        success: false,
+        message: 'Playlist não encontrada.'
+      });
+    }
+
+    // Buscar todas as músicas da playlist
+    const playlistTracks = await prisma.playlistTrack.findMany({
+      where: {
+        playlistId: playlistId
+      },
+      include: {
+        track: true
+      },
+      orderBy: {
+        addedAt: 'asc'
+      }
+    });
+
+    console.log('🎵 Listando', playlistTracks.length, 'músicas da playlist:', playlist.name);
+
+    res.status(200).json({
+      success: true,
+      message: `${playlistTracks.length} música(s) encontrada(s) na playlist.`,
+      data: {
+        playlist: {
+          id: playlist.id,
+          name: playlist.name,
+          description: playlist.description,
+          isPublic: playlist.isPublic,
+          user: playlist.user,
+          createdAt: playlist.createdAt,
+          updatedAt: playlist.updatedAt
+        },
+        tracks: playlistTracks
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao listar músicas da playlist:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor ao listar músicas da playlist.'
+    });
   }
 };
 
@@ -446,6 +627,7 @@ module.exports = {
   deletePlaylist,
   addTrackToPlaylist,
   removeTrackFromPlaylist,
+  getPlaylistTracks,
   addFavorite,
   removeFavorite,
 };

@@ -138,24 +138,106 @@ Todas as rotas requerem autenticação via JWT token no header `Authorization: B
 }
 ```
 
-#### 6. **Adicionar Música à Playlist**
+#### 6. **Listar Músicas de uma Playlist**
+- **Método:** `GET`
+- **URL:** `/api/playlists/:playlistId/tracks`
+- **Resposta:**
+```json
+{
+  "success": true,
+  "message": "3 música(s) encontrada(s) na playlist.",
+  "data": {
+    "playlist": {
+      "id": "uuid",
+      "name": "Nome da Playlist",
+      "description": "Descrição",
+      "isPublic": true,
+      "user": {
+        "id": "uuid",
+        "username": "Nome do Usuário"
+      },
+      "createdAt": "2025-08-04T17:21:57.250Z",
+      "updatedAt": "2025-08-04T17:21:57.250Z"
+    },
+    "tracks": [
+      {
+        "id": "uuid",
+        "playlistId": "uuid",
+        "trackId": "uuid",
+        "addedAt": "2025-08-04T17:21:58.123Z",
+        "track": {
+          "id": "uuid",
+          "spotifyTrackId": "track_001",
+          "title": "Bohemian Rhapsody",
+          "artist": "Queen",
+          "album": "A Night at the Opera",
+          "durationMs": 355000,
+          "imageUrl": "https://example.com/image.jpg",
+          "previewUrl": "https://example.com/preview.mp3",
+          "createdAt": "2025-08-04T17:21:58.100Z",
+          "updatedAt": "2025-08-04T17:21:58.100Z"
+        }
+      }
+    ]
+  }
+}
+```
+
+#### 7. **Adicionar Música à Playlist**
 - **Método:** `POST`
 - **URL:** `/api/playlists/:playlistId/tracks`
 - **Body:**
 ```json
 {
-  "spotifyTrackId": "spotify_track_id",
+  "spotifyTrackId": "track_001",
   "title": "Nome da Música",
   "artist": "Nome do Artista",
   "album": "Nome do Álbum",
   "durationMs": 180000,
-  "imageUrl": "url_da_imagem"
+  "imageUrl": "url_da_imagem",
+  "previewUrl": "url_do_preview"
+}
+```
+- **Resposta:**
+```json
+{
+  "success": true,
+  "message": "Música adicionada à playlist com sucesso!",
+  "data": {
+    "id": "uuid",
+    "playlistId": "uuid",
+    "trackId": "uuid",
+    "addedAt": "2025-08-04T17:21:58.123Z",
+    "track": {
+      "id": "uuid",
+      "spotifyTrackId": "track_001",
+      "title": "Nome da Música",
+      "artist": "Nome do Artista",
+      "album": "Nome do Álbum",
+      "durationMs": 180000,
+      "imageUrl": "url_da_imagem",
+      "previewUrl": "url_do_preview",
+      "createdAt": "2025-08-04T17:21:58.100Z",
+      "updatedAt": "2025-08-04T17:21:58.100Z"
+    },
+    "playlist": {
+      "id": "uuid",
+      "name": "Nome da Playlist"
+    }
+  }
 }
 ```
 
-#### 7. **Remover Música da Playlist**
+#### 8. **Remover Música da Playlist**
 - **Método:** `DELETE`
 - **URL:** `/api/playlists/:playlistId/tracks/:trackId`
+- **Resposta:**
+```json
+{
+  "success": true,
+  "message": "Música removida da playlist com sucesso!"
+}
+```
 
 ## 🔒 Validações Implementadas
 
@@ -165,14 +247,23 @@ Todas as rotas requerem autenticação via JWT token no header `Authorization: B
    - Nome da playlist é obrigatório
    - Nome não pode estar vazio
    - Não permite playlists com nomes duplicados para o mesmo usuário
+   - Dados da música são obrigatórios (spotifyTrackId, title, artist)
 4. **Verificação de existência:** Verifica se playlist existe antes de operações
+5. **Prevenção de duplicatas:** Não permite adicionar a mesma música múltiplas vezes na mesma playlist
+6. **Integridade referencial:** Verifica se música existe na playlist antes de remover
 
 ## 🧪 Como Testar
 
 ### Teste Automatizado
-Execute o script de teste:
+
+**Teste completo de playlists:**
 ```bash
 node test-playlists.js
+```
+
+**Teste de músicas em playlists:**
+```bash
+node test-playlist-tracks.js
 ```
 
 ### Teste Manual com Postman/Insomnia
@@ -223,23 +314,53 @@ PUT http://localhost:3001/api/playlists/{playlist_id}
 DELETE http://localhost:3001/api/playlists/{playlist_id}
 ```
 
+**Listar músicas de uma playlist:**
+```
+GET http://localhost:3001/api/playlists/{playlist_id}/tracks
+```
+
+**Adicionar música à playlist:**
+```
+POST http://localhost:3001/api/playlists/{playlist_id}/tracks
+{
+  "spotifyTrackId": "track_001",
+  "title": "Bohemian Rhapsody",
+  "artist": "Queen",
+  "album": "A Night at the Opera",
+  "durationMs": 355000,
+  "imageUrl": "https://example.com/image.jpg",
+  "previewUrl": "https://example.com/preview.mp3"
+}
+```
+
+**Remover música da playlist:**
+```
+DELETE http://localhost:3001/api/playlists/{playlist_id}/tracks/{track_id}
+```
+
 ## ✅ Status da Implementação
 
-- ✅ CRUD completo de playlists
+- ✅ Criação de playlists
+- ✅ Listagem de playlists do usuário
+- ✅ Busca de playlists por nome
+- ✅ Atualização de playlists
+- ✅ Exclusão de playlists
+- ✅ Listagem de músicas de uma playlist
+- ✅ Adição de músicas à playlist
+- ✅ Remoção de músicas da playlist
 - ✅ Autenticação e autorização
 - ✅ Validações de dados
-- ✅ Tratamento de erros
-- ✅ Logs detalhados
+- ✅ Prevenção de duplicatas
 - ✅ Testes automatizados
-- ✅ Integração com banco de dados
-- ✅ Relacionamentos com usuários
-- ✅ Contagem de tracks
-- ✅ Ordenação por data de criação
+- ✅ Documentação da API
 
 ## 🎯 Próximos Passos Sugeridos
 
-1. Implementar busca de playlists por nome
-2. Adicionar paginação para listagem
-3. Implementar playlists públicas/compartilhadas
-4. Adicionar funcionalidade de duplicar playlist
-5. Implementar reordenação de tracks na playlist
+1. **Sistema de favoritos** - Permitir que usuários marquem playlists como favoritas
+2. **Playlists públicas** - Implementar busca e visualização de playlists públicas
+3. **Compartilhamento** - Sistema de compartilhamento de playlists
+4. **Colaboração** - Permitir múltiplos usuários editarem uma playlist
+5. **Ordenação personalizada** - Permitir reordenar músicas nas playlists
+6. **Integração com Spotify** - Conectar com a API do Spotify para buscar músicas
+7. **Player de música** - Implementar reprodução de previews das músicas
+8. **Estatísticas** - Mostrar estatísticas de reprodução e músicas mais populares

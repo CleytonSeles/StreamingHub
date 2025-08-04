@@ -8,7 +8,8 @@ const {
   updatePlaylist,
   deletePlaylist,
   addTrackToPlaylist,
-  removeTrackFromPlaylist
+  removeTrackFromPlaylist,
+  getPlaylistTracks
 } = require('../controllers/playlistController');
 
 // Todas as rotas requerem autenticação
@@ -38,6 +39,11 @@ router.put('/:id', updatePlaylist);
 // @desc    Delete a playlist
 // @access  Private
 router.delete('/:id', deletePlaylist);
+
+// @route   GET /api/playlists/:playlistId/tracks
+// @desc    Get all tracks from a playlist
+// @access  Private
+router.get('/:playlistId/tracks', getPlaylistTracks);
 
 // @route   POST /api/playlists/:playlistId/tracks
 // @desc    Add a track to a playlist
