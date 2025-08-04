@@ -2,8 +2,6 @@ const express = require('express');
 const { authenticateToken } = require('../middlewares/authMiddleware');
 const { PrismaClient } = require('@prisma/client');
 const {
-  addTrackToPlaylist,
-  removeTrackFromPlaylist,
   addFavorite,
   removeFavorite,
 } = require('../controllers/playlistController');
@@ -19,43 +17,7 @@ router.get('/profile', (req, res) => {
   res.json({ user: req.user });
 });
 
-// Listar playlists do usuário
-router.get('/playlists', async (req, res) => {
-  try {
-    const playlists = await prisma.playlist.findMany({
-      where: { userId: req.user.id },
-      include: { _count: { select: { tracks: true } } },
-      orderBy: { createdAt: 'desc' }
-    });
-    res.json(playlists);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch playlists' });
-  }
-});
 
-// Criar playlist
-router.post('/playlists', async (req, res) => {
-  try {
-    const { name, description, isPublic } = req.body;
-    const playlist = await prisma.playlist.create({
-      data: {
-        name,
-        description,
-        isPublic: isPublic || false,
-        userId: req.user.id
-      }
-    });
-    res.status(201).json(playlist);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create playlist' });
-  }
-});
-
-// Adicionar música à playlist
-router.post('/playlists/:playlistId/tracks', addTrackToPlaylist);
-
-// Remover música da playlist
-router.delete('/playlists/:playlistId/tracks/:trackId', removeTrackFromPlaylist);
 
 // Listar favoritos (com include para dados da música)
 router.get('/favorites', async (req, res) => {
