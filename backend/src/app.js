@@ -7,6 +7,7 @@ const { PrismaClient } = require('@prisma/client');
 const authRoutes = require('./routes/auth');
 const apiRoutes = require('./routes/api');
 const searchRoutes = require('./routes/searchRoutes');
+const spotifyRoutes = require('./routes/spotifyRoutes');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -32,6 +33,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/spotify', spotifyRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {
