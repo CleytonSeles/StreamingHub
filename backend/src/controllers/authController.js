@@ -106,7 +106,7 @@ const spotifyCallback = async (req, res) => {
   const code = req.query.code || null;
 
   if (!code) {
-    return res.redirect(`${process.env.FRONTEND_URL}/#/error?message=Authorization code not provided`);
+    return res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?error=Authorization code not provided`);
   }
 
   try {
@@ -156,10 +156,10 @@ const spotifyCallback = async (req, res) => {
     const jwtToken = generateToken(user.id, user.username);
 
     // Redirecionar para o frontend com o token
-    res.redirect(`${process.env.FRONTEND_URL}/#/dashboard?token=${jwtToken}`);
+    res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?token=${jwtToken}`);
   } catch (error) {
     console.error('Error during Spotify callback:', error);
-    res.redirect(`${process.env.FRONTEND_URL}/#/error?message=${encodeURIComponent(error.message)}`);
+    res.redirect(`${process.env.FRONTEND_URL}/spotify-callback?error=${encodeURIComponent(error.message)}`);
   }
 };
 
