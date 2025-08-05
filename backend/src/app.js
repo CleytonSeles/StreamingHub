@@ -32,10 +32,10 @@ app.get('/health', (req, res) => {
 
 // Rotas
 app.use('/auth', authRoutes);
-app.use('/api', apiRoutes);
+app.use('/api/spotify', spotifyRoutes); // Spotify routes primeiro (tem endpoint público)
 app.use('/api/search', searchRoutes);
-app.use('/api/spotify', spotifyRoutes);
 app.use('/api/playlists', playlistRoutes);
+app.use('/api', apiRoutes); // API routes por último (tem middleware global)
 
 // Rota de teste
 app.get('/', (req, res) => {
